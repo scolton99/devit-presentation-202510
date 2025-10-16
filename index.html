@@ -8,16 +8,80 @@
 
 		<link rel="stylesheet" href="dist/reset.css">
 		<link rel="stylesheet" href="dist/reveal.css">
-		<link rel="stylesheet" href="dist/theme/black.css">
+		<link rel="stylesheet" href="dist/theme/iots.css">
 
 		<!-- Theme used for syntax highlighted code -->
-		<link rel="stylesheet" href="plugin/highlight/monokai.css">
+		<link rel="stylesheet" href="plugin/highlight/base16/chalk.css">
+
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&family=Metrophobic&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 	</head>
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
+				<section>
+					<img src="images/ts.png" style="height: 3.5em; margin: 0 0.25em 0 0; " />
+					<h2 style="line-height: 1">Runtime Typing</h2>
+					<img class="fragment" src="images/we'll do it at runtime.gif" />
+				</section>
+				<section>
+					<p>
+						These slides are published. <br/> Feel free to follow along.
+					</p>
+					<p class="fragment">
+						<a href="https://devit.sdc.sx/" style="font-family: 'Fira Code', monospace;">devit.sdc.sx</a>
+					</p>
+				</section>
+				<section>
+					<p style="margin-bottom: 1.5em;">
+						I like a presentation that tells you exactly what it's going to be.
+					</p>
+					<ul class="fragment">
+						<li>JavaScript/Limitations</li>
+						<li>Static Analysis</li>
+						<li>TypeScript</li>
+						<li>Type Guards</li>
+						<li><code>io-ts</code></li>
+						<li>Further Reading</li>
+					</ul>
+				</section>
+				<section>
+					<section>
+						<h1>Getting to Know the Audience</h1>
+					</section>
+					<section>
+						<p>
+							Who is well-versed in <img src="images/js.png" style="height: 1em; margin: 0" />?
+						</p>
+					</section>
+					<section>
+						<p>
+							Who is well-versed in <img src="images/ts.png" style="height: 1em; margin: 0" />?
+						</p>
+					</section>
+					<section>
+						<p>
+							Who knows what a <img src="images/ts.png" style="height: 1em; margin: 0;"> <strong>Type Guard</strong> is?
+						</p>
+					</section>
+					<section>
+						<p>
+							Who <em>could</em> explain the difference between static and dynamic typing?
+						</p>
+						<p class="fragment">
+							No, I'm not going to ask you to do it.
+						</p>
+					</section>
+					<section>
+						<p>
+						Who knows some type theory?
+						<br/>
+						\[  
+						\frac{\Gamma \vdash \textbf{e}_0 : (\tau_0 \rightarrow \tau_1) \qquad \Gamma \vdash \textbf{e}_1 : \tau_0}{\Gamma \vdash \textbf{e}_0(\textbf{e}_1) : \tau_1 }
+						\]
+					</p>
+					</section>
+				</section>
 			</div>
 		</div>
 
@@ -25,15 +89,17 @@
 		<script src="plugin/notes/notes.js"></script>
 		<script src="plugin/markdown/markdown.js"></script>
 		<script src="plugin/highlight/highlight.js"></script>
+		<script src="plugin/math/math.js"></script>
 		<script>
 			// More info about initialization & config:
 			// - https://revealjs.com/initialization/
 			// - https://revealjs.com/config/
 			Reveal.initialize({
 				hash: true,
+				maxScale: 5.0,
 
 				// Learn about plugins: https://revealjs.com/plugins/
-				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX ]
 			});
 		</script>
 	</body>
