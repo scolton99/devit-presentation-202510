@@ -38,7 +38,6 @@
 					</p>
 					<ul class="fragment">
 						<li>JavaScript/Limitations</li>
-						<li>Static Analysis</li>
 						<li>TypeScript</li>
 						<li>Type Guards</li>
 						<li><code>io-ts</code></li>
@@ -76,11 +75,869 @@
 						<p>
 						Who knows some type theory?
 						<br/>
-						\[  
-						\frac{\Gamma \vdash \textbf{e}_0 : (\tau_0 \rightarrow \tau_1) \qquad \Gamma \vdash \textbf{e}_1 : \tau_0}{\Gamma \vdash \textbf{e}_0(\textbf{e}_1) : \tau_1 }
-						\]
+						<div class="fragment">
+							\[  
+							\frac{\Gamma \vdash \textbf{e}_0 : (\tau_0 \rightarrow \tau_1) \qquad \Gamma \vdash \textbf{e}_1 : \tau_0}{\Gamma \vdash \textbf{e}_0(\textbf{e}_1) : \tau_1 }
+							\]
+						</div>
 					</p>
 					</section>
+				</section>
+				<section>
+					<h1><img src="images/js.png" style="height: 1em; margin: 0;"/> JavaScript</h1>
+					<p>
+						<em>&ldquo;Sure, why not, add an array to a string.&rdquo;</em>
+					</p>
+				</section>
+				<section>
+					<pre>
+						<code class="language-javascript" data-trim>
+							// https://github.com/denysdovhan/wtfjs
+
+							parseInt("Infinity", 19); // -> 18
+							parseInt(0.000001);       // -> 0
+							parseInt(0.0000001);      // -> 1
+							parseInt(1 / 1999999);    // -> 5
+
+							[1, 2, 3] + [4, 5, 6];    // -> '1,2,34,5,6'
+
+							[] == 0;                  // -> true
+							[undefined] == '';        // -> true
+							[0] == '';                // -> false
+						</code>
+					</pre>
+				</section>
+				<section>
+					<section>
+						<pre>
+							<code data-trim class="language-javascript">
+								const netId = 'sdc2637';
+								const netIdObj = await getUserObject(netId);
+
+								const newEmplId = '3027689';
+								netId['emplId'] = newEmplId;
+
+								console.log(netId['emplId']); // prints "undefined"
+							</code>
+						</pre>
+					</section>
+					<section>
+						<p>
+							One <em>might</em> argue that that's the fault of bad programming habits...
+						</p>
+						<p class="fragment ">
+							...but one also ought to consider Murphy's Law.
+						</p>
+					</section>
+				</section>
+				<section>
+					<h1><img src="images/ts.png" style="height: 1em; margin: 0;"/> TypeScript</h1>
+					<p>
+						<em>Are you <strong>SURE</strong> that number isn't <code>undefined</code>?</em>
+					</p>
+				</section>
+				<section>
+					<h2>What is it?</h2>
+					<ul>
+						<li>JavaScript(-ish) syntax with static(-er) types!</li>
+						<li>Compiles to JavaScript</li>
+						<li>Adds rules to save you from the worst of yourself</li>
+					</ul>
+				</section>
+				<section>
+					<section>
+						<pre>
+							<code data-trim class="language-typescript">
+								parseInt(0.000001);
+								// Argument of type 'number' is not assignable to 
+								// parameter of type 'string'.ts(2345)
+
+								[1, 2, 3] + [4, 5, 6];
+								// Operator '+' cannot be applied to types 'number[]' and 
+								// 'number[]'.ts(2365)
+
+								[] == 0;
+								// This comparison appears to be unintentional because the 
+								// types 'never[]' and 'number' have no overlap.ts(2367)
+							</code>
+						</pre>
+					</section>
+					<section>
+						<p>
+							These are all still <em>syntactically</em> correct.
+						</p>
+						<p>
+							TypeScript checks more than syntax.
+						</p>
+					</section>
+				</section>
+				<section>
+					<section>
+						<pre>
+							<code class="language-typescript" data-trim>
+								const netId = 'sdc2637';
+								const netIdObj = await getUserObject(netId);
+
+								const newEmplId = '3027689';
+								netId['emplId'] = newEmplId;
+								// Element implicitly has an 'any' type because 
+								// index expression is not of type 'number'.ts(7015)
+
+								console.log(netId['emplId']);
+							</code>
+						</pre>
+					</section>
+					<section>
+						<p>
+							It's not the <em>most</em> helpful error message in the world&hellip;
+						</p>
+						<p class="fragment">
+							&hellip;but it's better than no error at all.
+						</p>
+					</section>
+				</section>
+				<section data-transition="none">
+					<pre>
+						<code class="language-typescript" data-trim style="font-size: 0.75em; line-height: 1.25">
+							type NetID = {
+								netId: string
+								emplId: string
+								displayName: string
+							}
+
+							async function getUserObject(netId: string): Promise&lt;NetID&gt; {
+								
+
+
+
+
+							}
+
+							const netId = 'sdc2637';                     // type: string
+							const netIdObj = await getUserObject(netId); // type: NetID
+						</code>
+					</pre>
+				</section>
+				<section data-transition="none">
+					<pre>
+						<code class="language-typescript" data-trim style="font-size: 0.75em; line-height: 1.25">
+							type NetID = {
+								netId: string
+								emplId: string
+								displayName: string
+							}
+
+							async function getUserObject(netId: string): Promise&lt;NetID&gt; {
+								return {
+									netId: 'sdc2637',
+									emplId: '3027689',
+									displayName: 'Spencer Colton'
+								};
+							}
+
+							const netId = 'sdc2637';                     // type: string
+							const netIdObj = await getUserObject(netId); // type: NetID
+						</code>
+					</pre>
+				</section>
+				<section data-transition="none">
+					<pre>
+						<code class="language-typescript" data-trim style="font-size: 0.75em; line-height: 1.25">
+							type NetID = {
+								netId: string
+								emplId: string
+								displayName: string
+							}
+
+							async function getUserObject(netId: string): Promise&lt;NetID&gt; {
+								const userResponse = await fetch(`https://myawesomenetidapi.edu/${netId}`);
+								return await userResponse.json();
+
+
+
+							}
+
+							const netId = 'sdc2637';                     // type: string
+							const netIdObj = await getUserObject(netId); // type: NetID
+						</code>
+					</pre>
+				</section>
+				<section data-transition="none">
+					<pre>
+						<code class="language-typescript" data-trim style="font-size: 0.75em; line-height: 1.25">
+							type NetID = {
+								netId: string
+								emplId: string
+								displayName: string
+							}
+
+							async function getUserObject(netId: string): Promise&lt;NetID&gt; {
+								const userResponse = await fetch(`https://myawesomenetidapi.edu/${netId}`);
+								return await userResponse.json();
+								// This works, but should it?
+								// All of this is checked at compile-time, and the compiler cannot
+								// make a guarantee about what this API returns!
+							}
+
+							const netId = 'sdc2637';                     // type: string
+							const netIdObj = await getUserObject(netId); // type: NetID
+						</code>
+					</pre>
+				</section>
+				<section>
+					<h1>Type Guards</h1>
+				</section>
+				<section>
+					<p>
+						JavaScript provides some basic runtime type checking that TypeScript can make use of.
+					</p>
+				</section>
+				<section data-transition="none">
+					<pre>
+						<code class="language-typescript" data-trim>
+							function getTheLengthOfAThing(aThing: unknown): number {
+								return aThing.length;
+							}
+
+							// 
+						</code>
+					</pre>
+				</section>
+				<section data-transition="none">
+					<pre>
+						<code class="language-typescript" data-trim>
+							function getTheLengthOfAThing(aThing: unknown): number {
+								return aThing.length;
+							}
+
+							// 'aString' is of type 'unknown'.ts(18046)
+						</code>
+					</pre>
+				</section>
+				<section data-transition="none">
+					<pre>
+						<code class="language-typescript" data-trim>
+							function getTheLengthOfAThing(aThing: unknown): number {
+								if (typeof(aThing) !== 'string')
+									throw new Error('I only know string things');
+
+								return aThing.length;
+							}
+
+							// Works!
+						</code>
+					</pre>
+				</section>
+				<section>
+					<p>
+						Fabulous! Certainly it's always concise and readable, right?
+					</p>
+				</section>
+				<section data-transition="none">
+					<section data-transition="none">
+						<pre>
+							<code class="language-typescript" style="font-size: 0.8em; line-height: 1.2" data-trim data-line-numbers>
+								// For information only
+								type ThingWithAName = {
+									name: string
+								}
+
+								function getTheNameOfTheUnknownThing(aThing: unknown): string {
+									if (typeof(aThing) !== 'object' || aThing === null)
+										throw new Error('Only objects have names');
+
+									if (!('name' in aThing))
+										throw new Error('Thing has no name');
+
+									const name = aThing.name;
+									if (typeof(name) !== 'string')
+										throw new Error('Name is not a string');
+
+									return name;
+								}
+							</code>
+						</pre>
+					</section>
+					<section data-transition="none">
+						<pre>
+							<code class="language-typescript" style="font-size: 0.8em; line-height: 1.2" data-trim data-line-numbers="7">
+								// For information only
+								type ThingWithAName = {
+									name: string
+								}
+
+								function getTheNameOfTheUnknownThing(aThing: unknown): string {
+									if (typeof(aThing) !== 'object' || aThing === null)
+										throw new Error('Only objects have names');
+
+									if (!('name' in aThing))
+										throw new Error('Thing has no name');
+
+									const name = aThing.name;
+									if (typeof(name) !== 'string')
+										throw new Error('Name is not a string');
+
+									return name;
+								}
+							</code>
+						</pre>
+					</section>
+					<section data-transition="none">
+						<pre>
+							<code class="language-typescript" style="font-size: 0.8em; line-height: 1.2" data-trim data-line-numbers="10">
+								// For information only
+								type ThingWithAName = {
+									name: string
+								}
+
+								function getTheNameOfTheUnknownThing(aThing: unknown): string {
+									if (typeof(aThing) !== 'object' || aThing === null)
+										throw new Error('Only objects have names');
+
+									if (!('name' in aThing))
+										throw new Error('Thing has no name');
+
+									const name = aThing.name;
+									if (typeof(name) !== 'string')
+										throw new Error('Name is not a string');
+
+									return name;
+								}
+							</code>
+						</pre>
+					</section>
+					<section data-transition="none">
+						<pre>
+							<code class="language-typescript" style="font-size: 0.8em; line-height: 1.2" data-trim data-line-numbers="14">
+								// For information only
+								type ThingWithAName = {
+									name: string
+								}
+
+								function getTheNameOfTheUnknownThing(aThing: unknown): string {
+									if (typeof(aThing) !== 'object' || aThing === null)
+										throw new Error('Only objects have names');
+
+									if (!('name' in aThing))
+										throw new Error('Thing has no name');
+
+									const name = aThing.name;
+									if (typeof(name) !== 'string')
+										throw new Error('Name is not a string');
+
+									return name;
+								}
+							</code>
+						</pre>
+					</section>
+					<section data-transition="none">
+						<pre>
+							<code class="language-typescript" style="font-size: 0.8em; line-height: 1.2" data-trim data-line-numbers>
+								// For information only
+								type ThingWithAName = {
+									name: string
+								}
+
+								function getTheNameOfTheUnknownThing(aThing: unknown): string {
+									if (typeof(aThing) !== 'object' || aThing === null)
+										throw new Error('Only objects have names');
+
+									if (!('name' in aThing))
+										throw new Error('Thing has no name');
+
+									const name = aThing.name;
+									if (typeof(name) !== 'string')
+										throw new Error('Name is not a string');
+
+									return name;
+								}
+							</code>
+						</pre>
+					</section>
+				</section>
+				<section>
+					<p>
+						But it gets worse...
+					</p>
+				</section>
+				<section data-transition="none">
+					<pre>
+						<code class="language-typescript" data-trim style="font-size: 0.8em; line-height: 1.2">
+							type ThingWithAName {
+								name: string
+							}
+
+							function getTheNameOfTheThing(aThing: ThingWithAName): string {
+								return aThing.name;
+							}
+
+							const thing: unknown = { name: 'Unknown Thing' };
+							if (typeof(thing) !== 'object' || thing === null || 
+							    !('name' in thing) || typeof(thing.name) !== 'string')
+								throw new Error('Thing does not have a name');
+
+							console.log(getTheNameOfTheThing(thing));
+
+							//
+						</code>
+					</pre>
+				</section>
+				<section data-transition="none">
+					<pre>
+						<code class="language-typescript" data-trim style="font-size: 0.8em; line-height: 1.2">
+							type ThingWithAName {
+								name: string
+							}
+
+							function getTheNameOfTheThing(aThing: ThingWithAName): string {
+								return aThing.name;
+							}
+
+							const thing: unknown = { name: 'Unknown Thing' };
+							if (typeof(thing) !== 'object' || thing === null || 
+							    !('name' in thing) || typeof(thing.name) !== 'string')
+								throw new Error('Thing does not have a name');
+
+							console.log(getTheNameOfTheThing(thing));
+
+							// Type 'unknown' is not assignable to type 'string'.ts(2345)
+						</code>
+					</pre>
+				</section>
+				<section>
+					<p>
+						<strong>This is a deliberate and fundamental limitation of the language.</strong>
+					</p>
+					<p class="fragment" style="font-size: 0.5em;">
+						<a href="https://github.com/microsoft/TypeScript/issues/31755#issuecomment-498669080">https://github.com/microsoft/TypeScript/issues/31755#issuecomment-498669080</a>
+					</p>
+				</section>
+				<section>
+					<h1>What to do now?</h1>
+					<ul>
+						<li class="fragment">&ldquo;I know more than you&rdquo;</li>
+						<li class="fragment">&ldquo;I know more than you, here's some proof&rdquo;</li>
+						<li class="fragment">
+							<div style="display: flex; align-items: end;">
+								<img src="images/farmer.jpg" style="height: 30vh; display: block; margin: 0" />
+								<span class="fragment">&nbsp;(out of scope)</span>
+							</div>
+						</li>
+					</ul>
+				</section>
+				<section data-transition="none">
+					<section data-transition="none">
+						<h1 style="font-size: 1.5em; font-weight: normal">&ldquo;I know more than you&rdquo;</h1>
+						<pre>
+							<code class="language-typescript" data-trim style="font-size: 0.8em; line-height: 1.2" data-line-numbers>
+								type ThingWithAName {
+									name: string
+								}
+
+								function getTheNameOfTheThing(aThing: ThingWithAName): string {
+									return aThing.name;
+								}
+
+								const thing: unknown = { name: 'Unknown Thing' };
+								console.log(getTheNameOfTheThing(thing as ThingWithAName));
+							</code>
+						</pre>
+					</section>
+					<section data-transition="none">
+						<h1 style="font-size: 1.5em; font-weight: normal">&ldquo;I know more than you&rdquo;</h1>
+						<pre>
+							<code class="language-typescript" data-trim style="font-size: 0.8em; line-height: 1.2" data-line-numbers="10">
+								type ThingWithAName {
+									name: string
+								}
+
+								function getTheNameOfTheThing(aThing: ThingWithAName): string {
+									return aThing.name;
+								}
+
+								const thing: unknown = { name: 'Unknown Thing' };
+								console.log(getTheNameOfTheThing(thing as ThingWithAName));
+							</code>
+						</pre>
+					</section>
+					<section>
+						<p>
+							Generally considered bad form.
+						</p>
+						<p class="fragment">
+							You've given up a lot that was useful about the <img src="images/ts.png" style="height: 1em; margin: 0;" /> compiler.
+						</p>
+						<p class="fragment">
+							Bugs that <img src="images/ts.png" style="height: 1em; margin: 0;"/> was built to prevent now come back.
+						</p>
+					</section>
+				</section>
+				<section data-transition="none">
+					<section data-transition="none">
+						<h1 style="font-size: 1.5em; font-weight: normal">&ldquo;...here's some proof&rdquo;</h1>
+						<pre>
+							<code class="language-typescript" data-trim data-line-numbers style="font-size: 0.8em; line-height: 1.2">
+								type ThingWithAName {
+									name: string
+								}
+
+								function getTheNameOfTheThing(aThing: ThingWithAName): string {
+									return aThing.name;
+								}
+
+								function thingHasAName(aThing: unknown): aThing is ThingWithAName {
+									return typeof(aThing) === 'object' && aThing !== null && 
+									       'name' in aThing && typeof(aThing.name) === 'string';
+								}
+
+								const thing: unknown = { name: 'Unknown Thing' };
+								if (!thingHasAName(thing))
+									throw new Error('Thing does not have a name');
+
+								console.log(getTheNameOfTheThing(thing));
+							</code>
+						</pre>
+					</section>
+					<section data-transition="none">
+						<h1 style="font-size: 1.5em; font-weight: normal">&ldquo;...here's some proof&rdquo;</h1>
+						<pre>
+							<code class="language-typescript" data-trim data-line-numbers="9-12" style="font-size: 0.8em; line-height: 1.2">
+								type ThingWithAName {
+									name: string
+								}
+
+								function getTheNameOfTheThing(aThing: ThingWithAName): string {
+									return aThing.name;
+								}
+
+								function thingHasAName(aThing: unknown): aThing is ThingWithAName {
+									return typeof(aThing) === 'object' && aThing !== null && 
+									       'name' in aThing && typeof(aThing.name) === 'string';
+								}
+
+								const thing: unknown = { name: 'Unknown Thing' };
+								if (!thingHasAName(thing))
+									throw new Error('Thing does not have a name');
+
+								console.log(getTheNameOfTheThing(thing));
+							</code>
+						</pre>
+					</section>
+					<section data-transition="none">
+						<h1 style="font-size: 1.5em; font-weight: normal">&ldquo;...here's some proof&rdquo;</h1>
+						<pre>
+							<code class="language-typescript" data-trim data-line-numbers="15-18" style="font-size: 0.8em; line-height: 1.2">
+								type ThingWithAName {
+									name: string
+								}
+
+								function getTheNameOfTheThing(aThing: ThingWithAName): string {
+									return aThing.name;
+								}
+
+								function thingHasAName(aThing: unknown): aThing is ThingWithAName {
+									return typeof(aThing) === 'object' && aThing !== null && 
+									       'name' in aThing && typeof(aThing.name) === 'string';
+								}
+
+								const thing: unknown = { name: 'Unknown Thing' };
+								if (!thingHasAName(thing))
+									throw new Error('Thing does not have a name');
+
+								console.log(getTheNameOfTheThing(thing));
+							</code>
+						</pre>
+					</section>
+					<section>
+						<p><em>Cool, but can I lie?</em></p>
+						<p class="fragment">
+							Of course.
+						</p>
+					</section>
+					<section data-transition="none">
+						<h1 style="font-size: 1.5em; font-weight: normal">&ldquo;...here's some LIES&rdquo;</h1>
+						<pre>
+							<code class="language-typescript" data-trim data-line-numbers style="font-size: 0.8em; line-height: 1.2">
+								type ThingWithAName {
+									name: string
+								}
+
+								function getTheNameOfTheThing(aThing: ThingWithAName): string {
+									return aThing.name;
+								}
+
+								function thingHasAName(aThing: unknown): aThing is ThingWithAName {
+									return true;
+								}
+
+								const thing: unknown = 'this string has no name';
+								if (!thingHasAName(thing))
+									throw new Error('Thing does not have a name');
+
+								console.log(getTheNameOfTheThing(thing)); // prints "undefined"
+							</code>
+						</pre>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h1>&ldquo;Complex&rdquo; Types</h1>
+						<pre class="fragment">
+							<code class="language-typescript" data-trim>
+								type NetID = {
+									netId: string,
+									active: boolean,
+									hrEmplId: string,
+									sesEmplId: string,
+									displayName: string,
+									firstName: string,
+									middleName: string,
+									lastName: string,
+									pwdLastChangeDate: string,
+									nuAllSchoolAffiliations: string[]
+									...
+								}
+							</code>
+						</pre>
+					</section>
+					<section data-background-image="images/lakefill-hell.jpg">
+						<pre>
+							<code class="language-typescript" data-trim>
+								function isNetID(thing: unknown): thing is NetID {
+									if (typeof(thing) !== 'object' || thing === null)
+										return false;
+
+									if (!('netId' in thing && 'active' in thing && 'hrEmplId' in thing &&
+										    'sesEmplId' in thing && 'displayName' in thing && 'firstName' in thing &&
+												'middleName' in thing && 'lastName' in thing && 'pwdLastChangeDate' in thing &&
+												'nuAllSchoolAffiliations' in thing))
+										return false;
+
+									if (typeof(thing.netId) !== 'string' || typeof(thing.active) !== 'boolean' ||
+									    typeof(thing.hrEmplId !== 'string') || typeof(thing.sesEmplId) !== 'string' || 
+											typeof(thing.displayName) !== 'string' || typeof(thing.firstName) !== 'string' || 
+											typeof(thing.middleName) !== 'string' || typeof(thing.lastName) !== 'string' ||
+											typeof(thing.pwdLastChangeDate) !== 'string' || typeof(thing.nuAllSchoolAffiliations !== 'string'))
+										return false;
+
+									if (!Array.isArray(thing.nuAllSchoolAffiliations))
+										return false;
+
+									return true;
+								}
+							</code>
+						</pre>
+					</section>
+					<section>
+						<p><em>Shouldn't there be a library for this?</em></p>
+					</section>
+				</section>
+				<section>
+					<h1 style="font-size: 2em;">There's a library for this.</h1>
+					<p class="fragment">
+						<a href="https://github.com/gcanti/io-ts" target="_blank">github.com/gcanti/io-ts</a>
+					</p>
+				</section>
+				<section>
+					<p>
+						<code>io-ts</code> exploits the patterns in writing these type guards.
+					</p>
+					<p class="fragment">
+						If you know how to tell if something is a <code>string</code>, you can reuse that code when checking if 
+						a property of an object is a <code>string</code>.
+					</p>
+					<p class="fragment">
+						<em>And so on, and so forth...</em>
+					</p>
+				</section>
+				<section data-transition="none">
+					<section data-transition="none">
+						<pre>
+							<code class="language-typescript" data-trim data-line-numbers style="font-size: 0.8em; line-height: 1.2">
+								import * as t from 'io-ts';								
+								const ThingWithAName = t.type({
+									name: t.string
+								});
+
+								type ThingWithAName = t.typeof&lt;typeof ThingWithAName&gt;
+								function getTheNameOfTheThing(aThing: ThingWithAName): string {
+									return aThing.name;
+								}
+
+								const thing: unknown = { name: 'Name' };
+								if (!ThingWithAName.is(thing))
+									throw new Error('Thing does not have a name');
+
+								console.log(getTheNameOfTheThing(thing)); // Works!
+							</code>
+						</pre>
+					</section>
+					<section data-transition="none">
+						<pre>
+							<code class="language-typescript" data-trim data-line-numbers="2-4" style="font-size: 0.8em; line-height: 1.2">
+								import * as t from 'io-ts';								
+								const ThingWithAName = t.type({
+									name: t.string
+								});
+
+								type ThingWithAName = t.TypeOf&lt;typeof ThingWithAName&gt;
+								function getTheNameOfTheThing(aThing: ThingWithAName): string {
+									return aThing.name;
+								}
+
+								const thing: unknown = { name: 'Name' };
+								if (!ThingWithAName.is(thing))
+									throw new Error('Thing does not have a name');
+
+								console.log(getTheNameOfTheThing(thing)); // Works!
+							</code>
+						</pre>
+					</section>
+					<section data-transition="none">
+						<pre>
+							<code class="language-typescript" data-trim data-line-numbers="2-4" style="font-size: 0.8em; line-height: 1.2">
+								import * as t from 'io-ts';								
+								const ThingWithAName = t.type({
+									name: t.string
+								});
+
+								type ThingWithAName = t.TypeOf&lt;typeof ThingWithAName&gt;
+								function getTheNameOfTheThing(aThing: ThingWithAName): string {
+									return aThing.name;
+								}
+
+								const thing: unknown = { name: 'Name' };
+								if (!ThingWithAName.is(thing))
+									throw new Error('Thing does not have a name');
+
+								console.log(getTheNameOfTheThing(thing)); // Works!
+							</code>
+						</pre>
+					</section>
+					<section data-transition="none">
+						<pre>
+							<code class="language-typescript" data-trim data-line-numbers="6" style="font-size: 0.8em; line-height: 1.2">
+								import * as t from 'io-ts';								
+								const ThingWithAName = t.type({
+									name: t.string
+								});
+
+								type ThingWithAName = t.TypeOf&lt;typeof ThingWithAName&gt;
+								function getTheNameOfTheThing(aThing: ThingWithAName): string {
+									return aThing.name;
+								}
+
+								const thing: unknown = { name: 'Name' };
+								if (!ThingWithAName.is(thing))
+									throw new Error('Thing does not have a name');
+
+								console.log(getTheNameOfTheThing(thing)); // Works!
+							</code>
+						</pre>
+					</section>
+					<section data-transition="none">
+						<pre>
+							<code class="language-typescript" data-trim data-line-numbers="12-13" style="font-size: 0.8em; line-height: 1.2">
+								import * as t from 'io-ts';								
+								const ThingWithAName = t.type({
+									name: t.string
+								});
+
+								type ThingWithAName = t.TypeOf&lt;typeof ThingWithAName&gt;
+								function getTheNameOfTheThing(aThing: ThingWithAName): string {
+									return aThing.name;
+								}
+
+								const thing: unknown = { name: 'Name' };
+								if (!ThingWithAName.is(thing))
+									throw new Error('Thing does not have a name');
+
+								console.log(getTheNameOfTheThing(thing)); // Works!
+							</code>
+						</pre>
+					</section>
+				</section>
+				<section>
+					<h1>Limitations</h1>
+				</section>
+				<section>
+					<section>
+						<h2>External Types are Tricky</h2>
+					</section>
+					<section>
+						<p>
+							It's easiest to do <code>io-ts</code> if you are the one writing the types.
+						</p>
+					</section>
+					<section>
+						<p>
+							You <em>can</em>, in theory, write code that will allow <code>io-ts</code> to be a type guard
+							for a type in code you didn't write or don't control...
+						</p>
+					</section>
+					<section>
+						<p>
+							...but it's more annoying, and if the upstream code changes that type, you have to 
+							rewrite your code as well or risk the same issues that you would get with plain old JavaScript.
+						</p>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h2>Complex Types are Weird</h2>
+					</section>
+					<section>
+						<pre>
+							<code type="language-typescript" data-trim style="font-size: 0.9em; line-height: 1.2">
+								type NetID = {
+									netId: string
+									hrEmplId?: string // hrEmplId: string | undefined
+									sesEmplId?: string
+								}
+
+								const NetID = t.intersection([
+									t.type({
+										netId: t.string
+									}),
+									t.partial({
+										hrEmplId: t.string,
+										sesEmplId: t.string
+									})
+								]);
+							</code>
+						</pre>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h2>Error Reporting is Weird</h2>
+					</section>
+					<section>
+						<pre>
+							<code class="language-typescript" data-trim>
+								import { PathReporter } from 'io-ts/PathReporter';
+								if (!NetID.is(thing)) {
+									console.error('Invalid NetID format');
+									console.error(PathReporter.report(NetID.decode(thing)));
+								}
+							</code>
+						</pre>
+					</section>
+				</section>
+				<section>
+					<h1>Further Reading</h1>
+					<ul>
+						<li><a href="https://github.com/gcanti/io-ts/blob/master/index.md" target="_blank">io-ts README</a></li>
+						<li><a href="https://www.typescriptlang.org/docs/handbook/2/narrowing.html" target="_blank"><img src="images/ts.png" style="height: 1em; margin: 0"/> Type Narrowing, Predicates, User-Defined Type Guards</a></li>
+						<li><a href="https://en.wikipedia.org/wiki/Type_theory" target="_blank">Wikipedia Page on Type Theory</a></li>
+						<li>My professor's slides on type theory...ask me!</li>
+					</ul>
+				</section>
+				<section>
+					<h1>Questions?</h1>
+				</section>
+				<section>
+					<h1>Thank you!</h1>
 				</section>
 			</div>
 		</div>
